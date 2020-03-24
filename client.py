@@ -362,9 +362,6 @@ def startAI():
     set_gui(game, game.current_turn)
 
 
-
-
-
 def startpvp():
     global s
     global classtype

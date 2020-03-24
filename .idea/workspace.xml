@@ -2,49 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85ecd3be-32dd-497f-aef6-6e4a9213c2b3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/AI.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cards/blessed_heal.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hearthstoneAI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FirstProject.py" beforeDir="false" afterPath="$PROJECT_DIR$/FirstProject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Growing_Monster.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/armageddon.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assasinate.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/big_size_commander.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/big_sized_minion.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/blue_eyes_white_dragon.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cheers.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/companion.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eddie_the_monkey.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/flamestrike.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frostball.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/golem.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hearthstonegame.py" beforeDir="false" afterPath="$PROJECT_DIR$/hearthstonegame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/last_explosion.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lior_freezing_touch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lior_the_freezing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/michal_healing_touch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/michal_the_healer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mind_control.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/on_target.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ouchy.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/purple_eyes_pink_dragon.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shrink.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/small_size_commander.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/spell_master.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tamir_poison_master.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tamir_poisonous_touch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/the_coin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tomer_the_builder.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tomer_upgrading_touch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/twisting_nether.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upgrade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/white_eyes_blue_dragon.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/willy_confusing_touch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/willy_the_troll.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,13 +169,33 @@
       <option name="presentableId" value="Default" />
       <updated>1579422266629</updated>
     </task>
+    <task id="LOCAL-00001" summary="24.5">
+      <created>1585041667042</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1585041667042</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="24.5" />
+    <option name="LAST_COMMIT_MESSAGE" value="24.5" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="337" y="0" key="CommitChangelistDialog2" timestamp="1585041664472">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="337" y="0" key="CommitChangelistDialog2/0.0.1366.768@0.0.1366.768" timestamp="1585041664472" />
     <state x="463" y="138" key="FileChooserDialogImpl" timestamp="1585041447397">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="463" y="138" key="FileChooserDialogImpl/0.0.1366.768@0.0.1366.768" timestamp="1585041447397" />
+    <state x="549" y="277" key="Github.ShareDialog" timestamp="1585045805122">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="549" y="277" key="Github.ShareDialog/0.0.1366.768@0.0.1366.768" timestamp="1585045805122" />
     <state width="1345" height="164" key="GridCell.Tab.0.bottom" timestamp="1585008354598">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
