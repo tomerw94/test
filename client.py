@@ -1,9 +1,16 @@
 import socket, threading, tkinter
-import hearthstonegame, pickle
+import hearthstonegame
+import pickle
+class WideState():
+    pass
+import hearthstoneAI
 
 global playernumber
 playernumber = 1
 global s
+q_ready = dict()
+global classtype
+classtype = "warlock"
 
 
 def all_children(window):
@@ -15,20 +22,54 @@ def all_children(window):
 
     return _list
 
+def finish_AI_2(order, target, number, game):
+    if order == "attack":
+        game.attack(number, target)
+    elif order == "play":
+        game.play(number, target)
+    game.update_game()
+    set_gui(game, game.current_turn)
+
+
+def finish_AI_targeting(order, targets, number, game, all_buttons):
+
+    widget_list = all_children(gui)
+    for item in widget_list:
+        item.config(state="disabled")
+    print(order)
+
+    activating = number
+    print(activating, "<-activator")
+    print(targets)
+    for target in targets:
+        if target == 15:
+            all_buttons[1].config(state="normal", command=lambda game=game, order=order, number=number: finish_AI_2(order, 15, number, game))
+
+        elif 7 < target < 15:
+            all_buttons[3][target - 8].config(state="normal", command=lambda target=target, game=game, order=order, number=number: finish_AI_2(order, target, number, game))
+        elif 0 < target < 8:
+            all_buttons[2][target - 1].config(state="normal", command=lambda target=target, game=game, order=order, number=number: finish_AI_2(order, target, number, game))
+        elif target == 0:
+            all_buttons[0].config(state="normal", command=lambda game=game, order=order, number=number: finish_AI_2(order, 0, number, game))
+
+
 def set_targeting_gui(order, targets, gui, all_buttons):
-    print(order, targets)
+    print(order)
+    GameID = int(order[1][1:])
+
     widget_list = all_children(gui)
     for item in widget_list:
         item.config(state="disabled")
     for number in targets:
 
         if number == 0:
-
-            all_buttons[0].config(state="normal", command= lambda order=order, number=number: s.send(bytes("%s00%s" % (order[0],order[1]), "utf8")))
-
+            if GameID != -2:
+                all_buttons[0].config(state="normal", command=lambda order=order, number=number: s.send(bytes("%s00%s" % (order[0],order[1]), "utf8")))
+            else:
+                all_buttons[0].config(command=lambda order=order, number=number: finish_AI_targeting(order[0], number))
         elif number < 8:
 
-            all_buttons[2][number - 1].config(state="normal", command= lambda order=order, number=number: s.send(bytes("%s0%d%s" % (order[0], number, order[1]), "utf8")))
+            all_buttons[2][number - 1].config(state="normal", command=lambda order=order, number=number: s.send(bytes("%s0%d%s" % (order[0], number, order[1]), "utf8")))
         elif number < 10:
             all_buttons[3][number - 8].config(state="normal", command=lambda order=order, number=number: s.send(bytes("%s0%d%s" % (order[0], number, order[1]), "utf8")))
 
@@ -40,28 +81,40 @@ def set_targeting_gui(order, targets, gui, all_buttons):
 def dohandfunc(game, number, all_buttons):
     print("hand card :", number + 1, " was played")
     print("the name of the card is: ", game.players[game.current_turn].hand[number].name)
-    if game.players[game.current_turn].hand[number].targetable:
-        print("test")
-        targets = game.players[game.current_turn].hand[number].get_targets(game)
-        set_targeting_gui(["play %d" % number, " %d" % game.GameId], targets, gui, all_buttons)
-
+    if game.GameId == -2:
+        if game.players[game.current_turn].hand[number].targetable:
+            print("test")
+            targets = game.players[game.current_turn].hand[number].get_targets(game)
+            finish_AI_targeting("play", targets, number, game, all_buttons)
+        else:
+            game.play(number, 9)
+        game.update_game()
+        set_gui(game, game.current_turn)
     else:
-        s.send(bytes("play %d0%d %d" % (number, 9, game.GameId), "utf8"))
+        if game.players[game.current_turn].hand[number].targetable:
+            print("test")
+            targets = game.players[game.current_turn].hand[number].get_targets(game)
+            set_targeting_gui(["play %d" % number, " %d" % game.GameId], targets, gui, all_buttons)
+
+        else:
+            s.send(bytes("play %d0%d %d" % (number, 9, game.GameId), "utf8"))
 
 def doboardfunc(game, number, gui, all_buttons):
     print("board card :", number + 1, " is chosen")
     targets = []
     taunts = []
-    for minion in range(len(game.players[1 - playernumber].board)):
-        if game.players[1 - playernumber].board[minion].taunt:
+    for minion in range(len(game.players[1 - game.current_turn].board)):
+        if game.players[1 - game.current_turn].board[minion].taunt:
             taunts.append(minion)
     if len(taunts) == 0:
         targets.append(15)
     for minion in range(len(game.players[1 - game.current_turn].board)):
         if minion in taunts or len(taunts) == 0:
             targets.append(minion + 8)
-
-    set_targeting_gui(["attack %d" % number, " %d" % game.GameId], targets, gui, all_buttons)
+    if game.GameId == -2:
+        finish_AI_targeting("attack", targets, number, game, all_buttons)
+    else:
+        set_targeting_gui(["attack %d" % number, " %d" % game.GameId], targets, gui, all_buttons)
 
 
 
@@ -69,10 +122,16 @@ def doboardfunc(game, number, gui, all_buttons):
 def edoboardfunc(number):
     print("enemy board card :", number + 1, " is chosen")
 
+def end_turn_vsAI(game):
+    game.end_turn()
+    AI_turn(game, q_ready)
+    set_gui(game, game.current_turn)
 
-def endturnbutton(gameId):
-    print("Ending the turn in game: ", gameId)
+
+def endturnbutton(gameId,):
+
     s.send(bytes("end %d" % gameId, "utf8"))
+
 
 
 def playerherobutton():
@@ -82,8 +141,11 @@ def playerherobutton():
 def enemyherobutton():
     print("enemy hero was chosen")
 def doheropower(game):
-    s.send(bytes("hero %d" % game.GameId, "utf8"))
-
+    if game.GameId > -1:
+        s.send(bytes("hero %d" % game.GameId, "utf8"))
+    else:
+        game.heropower()
+        set_gui(game, game.current_turn)
 def event(list, Text):
 
     list[0].config(text=Text)
@@ -137,8 +199,11 @@ def set_gui(game, playernumber):
     enemyhero.config(state="disabled")
     enemyhero.place(x=400, y=0)
     endturn = tkinter.Button(master=gui, command=lambda gameId=game.GameId: endturnbutton(gameId), text="END TURN")
+    if game.GameId == -2:
+        endturn.config(command=lambda game=game: end_turn_vsAI(game))
     if game.current_turn != playernumber:
         endturn.config(state="disabled")
+
     endturn.place(x=700, y=150)
     playerboardbuttons = []
     enemyboardbuttons = []
@@ -147,7 +212,7 @@ def set_gui(game, playernumber):
         card_text = game.players[playernumber].hand[card].text
         playerhandbuttons.append(
             tkinter.Button(master=gui, command=lambda card=card, game=game, all_buttons=all_buttons: dohandfunc(game, card, all_buttons), text=game.players[playernumber].hand[card].guitext()))
-        if game.current_turn != playernumber or game.players[playernumber].hand[card].mana > game.players[playernumber].left_mana:
+        if game.current_turn != playernumber or game.players[playernumber].hand[card].mana > game.players[playernumber].left_mana or (game.players[playernumber].hand[card].type == "minion" and len(game.players[playernumber].board) > 6):
             playerhandbuttons[card].config(state="disabled")
 
         playerhandbuttons[card].bind("<Enter>", lambda _, information_list=information_list, card_text=card_text: event(information_list, card_text))
@@ -258,10 +323,54 @@ def echo_data(sock):
             break
 
 
-def start():
-    global s
-    """enemyfound = False
+def AI_turn(game, q_table):
+    state = hearthstoneAI.State(game)
+    while state.attacker_index > -1:
+        state = hearthstoneAI.State(game)
+        print("test")
+        action = hearthstoneAI.choose_action(state)
+        if action == hearthstoneAI.FACE:
+            game.attack(state.attacker_index + 1, 15)
+        elif action == hearthstoneAI.ENJURE_SURVIVE:
+            target = hearthstoneAI.get_enj_and_survive(state, state.attacker_index)
+            game.attack(state.attacker_index + 1, target + 8)
+        elif action == hearthstoneAI.TRADE:
+            target = hearthstoneAI.get_trade_target(state, state.attacker_index)
+            game.attack(state.attacker_index + 1, target + 8)
+        elif action == hearthstoneAI.KILL_SURVIVE:
+            target = hearthstoneAI.get_kill_and_survive(state, state.attacker_index)
+            game.attack(state.attacker_index + 1, target + 8)
+        elif action == hearthstoneAI.ENJURE_DIE:
+            target = hearthstoneAI.get_enj_and_die(state, state.attacker_index)
+            game.attack(state.attacker_index + 1, target + 8)
+        state.attacker_index = hearthstoneAI.find_attacker_index(state)
+    state.play_cards()
+    game.end_turn()
 
+#def set_AI_gui(game, playernumber):
+
+
+def startAI():
+    q_ready = pickle.load(open("qtable-1584340730.pickle", "rb"))
+    game = hearthstonegame.Game(-2)
+    game.players[0].type = "warlock"
+    game.players[1].type = "warlock"
+
+    import copy
+
+    AI_turn(game, q_ready)
+    set_gui(game, game.current_turn)
+
+
+
+
+
+def startpvp():
+    global s
+    global classtype
+    print("classtype is %s!!!" % classtype)
+    """enemyfound = False
+    
     while not enemyfound:"""
     host = "DESKTOP-E2TIGKM"
     port = 4000
@@ -271,7 +380,7 @@ def start():
     s.connect(address)
 
     threading.Thread(target=echo_data, args=(s,)).start()
-    s.send(bytes("start warlock", "utf8"))
+    s.send(bytes("start %s" % classtype, "utf8"))
 
 
 def send(order):
@@ -280,6 +389,10 @@ def send(order):
         s.close()
         gui.quit()
 
+def set_class(pressed_class):
+    global classtype
+    classtype = pressed_class
+    print("in setting, %s" % classtype)
 
 """def on_closing(event=None):
     my_msg.set("{quit}")
@@ -289,8 +402,14 @@ gui = tkinter.Tk()
 gui.title("Hearthstone")
 
 messages_frame = tkinter.Frame(gui)
-StartGame = tkinter.Button(master=gui, command=start, text="Start!")
-StartGame.pack()
+PVP = tkinter.Button(master=gui, command=startpvp, text="PVP")
+PVP.pack()
+PVAI = tkinter.Button(master=gui, command=startAI, text="Vs COMPUTER")
+PVAI.pack()
+WARLOCK = tkinter.Button(master=gui, command=lambda: set_class("warlock"), text="Warlock")
+WARLOCK.pack()
+MICHAL = tkinter.Button(master=gui, command=lambda: set_class("michal"), text="Michal")
+MICHAL.pack()
 
 """my_msg = tkinter.StringVar()
 my_msg.set("Type your messages here.")

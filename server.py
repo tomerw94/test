@@ -17,6 +17,7 @@ print("Server is ready...")
 serverRunning = True
 
 def start_game(classtype):
+    print("starting game with %s" % classtype)
 
 
     games[-1].players[1].type = "%s" % classtype
@@ -118,7 +119,8 @@ def handle_client(conn):
 
                 print("waiting... game number is %d" % game_number)
                 Id = len(games)
-                games.append(hearthstonegame.Game(Id))
+                games.append(
+                    hearthstonegame.Game(Id))
                 games[game_number].players[0].type = client_order[6:]
                 print(type(games[game_number]))
                 print(games[game_number])

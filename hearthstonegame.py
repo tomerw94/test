@@ -4,41 +4,42 @@ import random
 import hearthstoneminion
 import copy
 
-import small_size_commander
-import big_sized_minion
-import blue_eyes_white_dragon
-import white_eyes_blue_dragon
-import purple_eyes_pink_dragon
-import tamir_poison_master
-import flamestrike
-import michal_the_healer
-import willy_confusing_touch
-import michal_healing_touch
-import mind_control
-import tomer_upgrading_touch
-import twisting_nether
-import on_target
-import companion
-import lior_the_freezing
-import lior_freezing_touch
-import willy_the_troll
-import tomer_the_builder
-import tamir_poisonous_touch
-import Growing_Monster
-import eddie_the_monkey
-import the_coin
-import last_explosion
-import assasinate
-import  frostball
-import spell_master
-import upgrade
-import golem
-import armageddon
-import magic
-import ouchy
-import shrink
-import big_sized_minion
-import cheers
+from cards import blessed_heal
+from cards import small_size_commander
+from cards import big_size_commander
+from cards import blue_eyes_white_dragon
+from cards import white_eyes_blue_dragon
+from cards import purple_eyes_pink_dragon
+from cards import tamir_poison_master
+from cards import flamestrike
+from cards import michal_the_healer
+from cards import willy_confusing_touch
+from cards import michal_healing_touch
+from cards import mind_control
+from cards import tomer_upgrading_touch
+from cards import twisting_nether
+from cards import on_target
+from cards import companion
+from cards import lior_the_freezing
+from cards import lior_freezing_touch
+from cards import willy_the_troll
+from cards import tomer_the_builder
+from cards import tamir_poisonous_touch
+from cards import Growing_Monster
+from cards import eddie_the_monkey
+from cards import the_coin
+from cards import last_explosion
+from cards import assasinate
+from cards import frostball
+from cards import spell_master
+from cards import upgrade
+from cards import golem
+from cards import armageddon
+from cards import magic
+from cards import ouchy
+from cards import shrink
+from cards import big_sized_minion
+from cards import cheers
 """
 """
 
@@ -73,11 +74,13 @@ class Game:
                 self.all_cards[(7 * i) + m].attack = (2 * (m + 1)) - self.all_cards[m].max_health + 1
 
         self.all_cards.append(small_size_commander.small_size_commander())
-        self.all_cards.append(big_sized_minion.big_sized_minion())
+        self.all_cards.append(big_size_commander.big_size_commander())
         self.all_cards.append(cheers.cheers())
         self.all_cards.append(golem.golem())
-        self.all_cards.append(lior_the_freezing.lior_the_freezing())
-        self.all_cards.append(lior_freezing_touch.lior_freezing_touch())
+        if self.GameId > -1:
+            self.all_cards.append(lior_the_freezing.lior_the_freezing())
+            self.all_cards.append(lior_freezing_touch.lior_freezing_touch())
+            self.all_cards.append(tomer_the_builder.tomer_the_builder())
         self.all_cards.append(tamir_poison_master.tamir_poison_master())
         self.all_cards.append(tamir_poisonous_touch.tamir_poisonous_touch())
         self.all_cards.append(ouchy.ouchy())
@@ -96,7 +99,6 @@ class Game:
         self.all_cards.append(companion.companion())
         self.all_cards.append(michal_healing_touch.michal_healing_touch())
         self.all_cards.append(willy_the_troll.willy_the_troll())
-        self.all_cards.append(tomer_the_builder.tomer_the_builder())
         self.all_cards.append(Growing_Monster.growing_monster())
         self.all_cards.append(eddie_the_monkey.eddie_the_monkey())
         self.all_cards.append(last_explosion.last_explosion())
@@ -119,14 +121,14 @@ class Game:
         for minion in self.all_minions:
             if minion.rarity == "common":
                 self.common_minions.append(minion)
-                print(minion.name)
+                #print(minion.name)
             elif minion.rarity == "rare":
                 self.rare_minions.append(minion)
             elif minion.rarity == "epic":
                 self.epic_minions.append(minion)
             else:
                 self.legendary_minions.append(minion)
-        print("cards : %d %d %d %d %d" % (len(self.common_minions), len(self.rare_minions), len(self.epic_minions), len(self.legendary_minions), len(self.all_spells)))
+        #print("cards : %d %d %d %d %d" % (len(self.common_minions), len(self.rare_minions), len(self.epic_minions), len(self.legendary_minions), len(self.all_spells)))
 
         for i in range(2):
             commonsamples = random.sample(range(0, len(self.common_minions)), 10)
@@ -142,17 +144,18 @@ class Game:
             for number in legendarysamples:
                 self.players[i].deck.append(copy.deepcopy(self.legendary_minions[number]))
             spellsamples = random.sample(range(0, len(self.all_spells)), 10)
-            for number in spellsamples:
-                self.players[i].deck.append(copy.deepcopy(self.all_spells[number]))
+            if self.GameId > -1:
+                for number in spellsamples:
+                    self.players[i].deck.append(copy.deepcopy(self.all_spells[number]))
             random.shuffle(self.players[i].deck)
 
 
 
-        print("length of deck is ", len(self.players[self.current_turn].deck), " cards")
+        #print("length of deck is ", len(self.players[self.current_turn].deck), " cards")
 
         self.players[self.current_turn].draw(4)
         self.players[self.current_turn].max_mana = 1
-        self.players[self.current_turn].left_mana = self.players[0].max_mana
+        self.players[self.current_turn].left_mana = self.players[self.current_turn].max_mana
         self.players[1 - self.current_turn].draw(4)
         self.players[1 - self.current_turn].max_mana = 0
         self.players[1 - self.current_turn].hand.append(the_coin.the_coin())
@@ -178,11 +181,18 @@ class Game:
             self.deathrattles_list[0][1].activate_deathrattle(self, self.deathrattles_list[0][0])
             self.deathrattles_list.pop(0)
             self.update_game()
-        if self.players[0].health <= 0:
-            print("%s died!" % self.players[0].name)
+        """else:
+            fm = []
+            for minion in self.players[self.current_turn].board:
+                fm.append([minion.attack, minion.health])
+            em = []
+            for minion in self.players[1 - self.current_turn].board:
+                em.append([minion.attack, minion.health])
+            print(self.players[1 - self.current_turn].health)
+            print(em)
+            print(fm)
+            print(self.players[self.current_turn].health)"""
 
-        if self.players[1].health <= 0:
-            print("%s died!" % self.players[1].name)
 
     """def get_player_move(self, p):
 
@@ -194,8 +204,6 @@ class Game:
             if minion.end_of_friendly_turn:
                 minion.active_end_of_friendly_turn(self)
                 self.update_game()
-
-
 
         self.current_turn = 1 - self.current_turn
         self.can_heropower = True
@@ -263,13 +271,13 @@ class Game:
                 self.players[1 - self.current_turn].health = self.players[1 - self.current_turn].maxhealth
 
     def kill(self, target):
-        print("prechange target is %d" % target)
+        #print("prechange target is %d" % target)
         player = self.current_turn
         if target > 6:
             target -= 7
             player = 1 - player
-        print("target is %d and board length is %d" %(target, len(self.players[player].board)))
-        print("current turn is %d" % self.current_turn)
+        #print("target is %d and board length is %d" %(target, len(self.players[player].board)))
+        #print("current turn is %d" % self.current_turn)
         self.temp_card = self.players[player].board[target]
         self.players[player].board.pop(target)
         if self.temp_card.deathrattle:
@@ -280,21 +288,24 @@ class Game:
 
 
     def heropower(self):
-
+        print(self.players[self.current_turn].type)
         if self.players[self.current_turn].type == "warlock":
             self.players[self.current_turn].draw(1)
             self.damage(2, 0)
-            self.can_heropower = False
-            self.players[self.current_turn].left_mana -= 2
-            self.add_action(self.current_turn, " used Hero Power")
-            self.update_game()
+        elif self.players[self.current_turn].type == "michal":
+            self.players[self.current_turn].deck.append(blessed_heal.blessed_heal())
+            random.shuffle(self.players[self.current_turn].deck)
+        self.can_heropower = False
+        self.players[self.current_turn].left_mana -= 2
+        self.add_action(self.current_turn, " used Hero Power")
+        self.update_game()
 
 
 
 
 
     def play(self, handloc, target):
-        print("current_turn = ", self.current_turn, " handloc = ", handloc, "target = ", target)
+        #print("current_turn = ", self.current_turn, " handloc = ", handloc, "target = ", target)
         self.temp_card = self.players[self.current_turn].hand[handloc]
         self.add_action(self.current_turn, " played %s" %self.temp_card.name)
         self.players[self.current_turn].hand.pop(handloc)
@@ -312,7 +323,7 @@ class Game:
             self.players[self.current_turn].board.append(card)
 
         elif card.type == "spell":
-            print("a spell was activated")
+            #print("a spell was activated")
             if card.targetable:
                 card.activate(self, target)
             else:
@@ -346,6 +357,7 @@ class Game:
                 self.players[1 -self.current_turn].board[target - 1].name))
 
             self.players[self.current_turn].can_attack = False
+        self.update_game()
 
     def connected(self):
         return self.ready

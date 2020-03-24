@@ -1,13 +1,13 @@
 import hearthstonespell
 
-class flamestrike(hearthstonespell.Spell):
+class blessed_heal(hearthstonespell.Spell):
 
     def __init__(self):
         #super().__init__(type, mana, text, name)
         self.type = "spell"
-        self.mana = 7
-        self.text = "Deal 4 damage to all enemy minions"
-        self.name = "Flamestrike"
+        self.mana = 0
+        self.text = 'Heal your hero +1.\nDraw a card.'
+        self.name = "Blessed Heal"
         self.targetable = False
 
     """def guitext(self):
@@ -15,5 +15,5 @@ class flamestrike(hearthstonespell.Spell):
 
     def activate(self, game):
 
-        for enemy in range(len(game.players[1 - game.current_turn].board)):
-            game.damage(4, enemy + 8)
+        game.heal(1, 0)
+        game.players[game.current_turn].draw(1)
